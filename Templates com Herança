@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Blog De Marco{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body>
+    <h1>Blog De Marco</h1>
+    <nav>
+        <a href="{% url 'home' %}">Início</a> |
+        <a href="{% url 'criar_autor' %}">Novo Autor</a> |
+        <a href="{% url 'criar_categoria' %}">Nova Categoria</a> |
+        <a href="{% url 'criar_post' %}">Novo Post</a> |
+        <a href="{% url 'buscar_post' %}">Buscar</a>
+    </nav>
+    <hr>
+    {% block content %}{% endblock %}
+</body>
+</html>
+
+{% extends 'base.html' %}
+{% block title %}Início{% endblock %}
+{% block content %}
+<h2>Posts Recentes</h2>
+{% for post in posts %}
+    <div>
+        <h3>{{ post.titulo }}</h3>
+        <p>{{ post.conteudo|truncatechars:150 }}</p>
+        <small>Autor: {{ post.autor }} | Categoria: {{ post.categoria }}</small>
+    </div>
+    <hr>
+{% empty %}
+    <p>Nenhum post encontrado.</p>
+{% endfor %}
+{% endblock %}
+
+{% extends 'base.html' %}
+{% block title %}Buscar{% endblock %}
+{% block content %}
+<form method="get" action="{% url 'buscar_post' %}">
+    <input type="text" name="termo" placeholder="Buscar por título">
+    <button type="submit">Buscar</button>
+</form>
+{% endblock %}
+
+{% extends 'base.html' %}
+{% block title %}Resultados da busca{% endblock %}
+{% block content %}
+<h2>Resultados para "{{ termo }}"</h2>
+{% for post in resultados %}
+    <p><strong>{{ post.titulo }}</strong> - {{ post.autor }}</p>
+{% empty %}
+    <p>Nenhum resultado encontrado.</p>
+{% endfor %}
+{% endblock %}
