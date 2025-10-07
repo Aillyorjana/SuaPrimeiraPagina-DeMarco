@@ -1,0 +1,33 @@
+from django.shortcuts import render, redirect
+from .models import Autor, Categoria, Post
+from .forms import AutorForm, CategoriaForm, PostForm
+
+def home(request):
+    posts = Post.objects.all().order_by('-data_criacao')
+    return render(request, 'home.html', {'posts': posts})
+
+def criar_autor(request):
+    form = AutorForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return redirect('home')
+    return render(request, 'autor_form.html', {'form': form})
+
+def criar_categoria(request):
+    form = CategoriaForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return redirect('home')
+    return render(request, 'categoria_form.html', {'form': form})
+
+def criar_post(request):
+    form = PostForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return redirect('home')
+    return render(request, 'post_form.html', {'form': form})
+
+def buscar_post(request):
+    termo = request.GET.get('termo')
+    resultados = Post.objects.filter(titulo__icontains=termo) if termo else []
+    return render(request, 'resultado_busca.html', {'resultados': resultados, 'termo': termo})
